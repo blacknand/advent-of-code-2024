@@ -13,6 +13,7 @@
 #include <boost/foreach.hpp>
 #include <algorithm>
 #include <cmath>
+#include <unordered_map>
 
 int main() {
     std::ifstream f("day1_input.txt");
@@ -32,6 +33,7 @@ int main() {
         arr1.push_back(tokens[0]);
         arr2.push_back(tokens[1]);
     }
+    f.close();
 
     // Convert from string to integers
     std::vector<int> int_arr1;
@@ -48,6 +50,31 @@ int main() {
     }
 
     std::cout << "Total difference: " << total_distance << std::endl;
+
+    /**
+     * you'll need to figure out exactly how often each number from the left list appears in the right list. 
+     * Calculate a total similarity score by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
+     */
+
+    typedef std::unordered_map<int, int> counter_map;
+    counter_map counts;
+
+    for (auto i: int_arr1) {
+        auto it = counts.find(i);
+        if (it != counts.end())
+            it->second++;
+        else
+            counts[i] = 1;
+    }
+
+    int similarity_score = 0;
+    for (auto i: int_arr2) {
+        auto it = counts.find(i);
+        if (it != counts.end())
+            similarity_score += i * it->second;
+    }
+
+    std::cout << "Total similarity score: " << similarity_score << std::endl;
 
     f.close();
     return 0;
