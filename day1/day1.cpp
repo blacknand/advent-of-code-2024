@@ -12,6 +12,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/foreach.hpp>
 #include <algorithm>
+#include <cmath>
 
 int main() {
     std::ifstream f("day1_input.txt");
@@ -20,20 +21,33 @@ int main() {
         return 1;
     }
 
+    // Split each line into 2 seperate elements inside of vector line
     std::string s;
-    std::vector<std::vector<std::string>> arr;
+    std::vector<std::string> arr1;
+    std::vector<std::string> arr2;
     while (getline(f, s)) {
-        std::vector<std::string> line;
-        boost::split(line, s, boost::is_space(), boost::token_compress_on);
-        arr.push_back(line);
+        std::vector<std::string> tokens;
+        boost::split(tokens, s, boost::is_space(), boost::token_compress_on);
+
+        arr1.push_back(tokens[0]);
+        arr2.push_back(tokens[1]);
     }
 
-    for (const auto &row: arr) {
-        for (const auto &element: row)
-            auto min = *std::max_element(std::begin(element), std::end(element));  
-        std::cout << std::endl;
+    // Convert from string to integers
+    std::vector<int> int_arr1;
+    std::vector<int> int_arr2;
+    std::transform(arr1.begin(), arr1.end(), std::back_inserter(int_arr1), [](const std::string &str) {return std::stoi(str);});
+    std::transform(arr2.begin(), arr2.end(), std::back_inserter(int_arr2), [](const std::string &str) {return std::stoi(str);});
+
+    std::sort(int_arr1.begin(), int_arr1.end());
+    std::sort(int_arr2.begin(), int_arr2.end());
+
+    int total_distance = 0;
+    for (size_t i = 0; i < int_arr1.size(); ++i) {
+        total_distance += std::abs(int_arr1[i] - int_arr2[i]);
     }
 
+    std::cout << "Total difference: " << total_distance << std::endl;
 
     f.close();
     return 0;
