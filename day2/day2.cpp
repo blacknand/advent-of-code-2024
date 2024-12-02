@@ -22,6 +22,7 @@ int main() {
 
     std::string s;
     int safe = 0;
+    int lines = 0;
     while (getline(f, s)) {
         std::vector<std::string> tokens;
         boost::split(tokens, s, boost::is_space(), boost::token_compress_on);
@@ -29,20 +30,25 @@ int main() {
         std::transform(tokens.begin(), tokens.end(), std::back_inserter(int_arr), [](const std::string &str) {return std::stoi(str);});
 
         bool unsafe = false;
+        bool increasing = int_arr[0] < int_arr[1];
         for (size_t i = 0; i < int_arr.size() - 1; i++) {
-            if (!(int_arr[i] > int_arr[i + 1] and std::abs(int_arr[i] - int_arr[i + 1]) >= 1 && std::abs(int_arr[i] - int_arr[i + 1]) <= 3)) {
+            int dist = std::abs(int_arr[i] - int_arr[i + 1]);
+
+            if ((increasing && int_arr[i] >= int_arr[i + 1]) || (!increasing && int_arr[i] <= int_arr[i + 1]) || dist < 1 || dist > 3) {
                 unsafe = true;
                 break;
-            }
+            } 
         }
         
         for (auto i: int_arr)
-            std::cout << i << " -->";
-        std::cout << unsafe << std::endl;        
+            std::cout << i;
+        std::cout << " --> " << unsafe << std::endl;        
         if (!(unsafe))
             safe++;
+        lines++;
     }
 
-    std::cout << "Safe reports: " << safe << std::endl;
+    std::cout << "Safe reports: " << safe << "  Lines " << lines << std::endl;
+    f.close();
     return 0;
 }
